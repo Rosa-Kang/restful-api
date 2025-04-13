@@ -7,7 +7,7 @@ const { serve } = require('upstash/workflow/express'); //When packages are writt
 
 export const sendReminders = serve(async(context) => {
     const { subscriptionId } = context.requestPayload;
-    const subscription = await fetchSubscription(context, subscriptionId)
+    const subscription = await fetchSubscription(context, subscriptionId);
 
     if(!subscription || subscription.status !== 'active') return;
 
@@ -22,8 +22,9 @@ export const sendReminders = serve(async(context) => {
         const reminderDate = renewalDate.subtract(daysBefore, 'day');
 
         if(reminderDate.isAfter(dayjs())) {
-
+            await sleepUntilReminder(context, `${daysBefore} days before renewal`, reminderDate);
         }
+        await triggerReminder(context, `reminder-${daysBefore}`);
     }
 });
 

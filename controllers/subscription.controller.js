@@ -1,4 +1,5 @@
 import Subscription from "../models/subscription.model.js";
+import { workflowClient } from 'upstash/workflow';
 
 export const createSubscription = async (req, res, next) => {
     try {
@@ -7,6 +8,8 @@ export const createSubscription = async (req, res, next) => {
             ...req.body,
             user: req.user._id
         });
+
+        await workflowClient.trigger()
 
         // send response
         res.status(201).json({
